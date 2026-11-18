@@ -1,0 +1,76 @@
+name: Git CLI evidence - authentic repository commands
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/git-cli-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cli-demonstration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Git commands against a real fresh clone
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee "$GITHUB_WORKSPACE/git-cli-evidence.log") 2>&1
+          echo "CSC418 Git CLI evidence - GitHub-hosted Linux runner"
+          echo "The repository was ALREADY created before this run; creation via CLI is NOT claimed."
+          echo '$ git --version'
+          git --version
+          echo '$ git clone https://github.com/.../student-task-manager.git cli-workdir'
+          git clone "https://github.com/${GITHUB_REPOSITORY}.git" cli-workdir
+          cd cli-workdir
+          echo '$ git config user.name and user.email'
+          git config user.name "GitHub Actions CLI Demonstration"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --get user.name
+          git config --get user.email
+          branch="evidence/cli-run-${GITHUB_RUN_ID}"
+          echo "$ git switch -c ${branch}"
+          git switch -c "$branch"
+          echo '$ git status'
+          git status
+          printf 'This real Git branch was produced by the CSC418 GitHub Actions CLI evidence workflow.\n' > docs/cli-demonstration.md
+          echo '$ git add -N docs/cli-demonstration.md'
+          git add -N docs/cli-demonstration.md
+          echo '$ git diff -- docs/cli-demonstration.md'
+          git diff -- docs/cli-demonstration.md
+          echo '$ git add docs/cli-demonstration.md'
+          git add docs/cli-demonstration.md
+          echo '$ git status'
+          git status
+          echo '$ git commit -m "docs: demonstrate Git CLI workflow on evidence branch"'
+          git commit -m "docs: demonstrate Git CLI workflow on evidence branch"
+          echo '$ git log --oneline -5'
+          git log --oneline -5
+          echo '$ gh auth setup-git (no token logged)'
+          gh auth setup-git
+          echo "$ git push -u origin ${branch}"
+          git push -u origin "$branch"
+          echo "$ git pull --ff-only origin ${branch}"
+          git pull --ff-only origin "$branch"
+          echo '$ git status'
+          git status
+          echo '$ git merge-tree --write-tree <historical-status-testing> <historical-status-ready>'
+          if git merge-tree --write-tree becf93f59ea1dbca36f5a370ede024314fcf6ec4 8cb12a742a8e20e5b3f70d2c1e75c9a301a9f78e; then
+            echo 'Unexpected: merge-tree reported no conflict.'
+          else
+            echo 'Expected: merge-tree detected the historical README conflict.'
+          fi
+          echo '$ git show 87ca5f2:README.md'
+          git show 87ca5f2:README.md
+          echo 'CLI demonstration finished; see git-cli-evidence.log artifact.'
+      - name: Upload authentic Git CLI transcript
+        uses: actions/upload-artifact@v4
+        with:
+          name: git-cli-evidence
+          path: git-cli-evidence.log
+          retention-days: 30
