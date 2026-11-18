@@ -37,7 +37,12 @@ class TaskManager:
 
     def add_task(self, title):
         """Add a task and return it. Validation is developed in a feature branch."""
-        task = Task(self.next_id, title.strip())
+        if not isinstance(title, str):
+            raise ValueError("Task title must be text.")
+        clean_title = title.strip()
+        if not clean_title:
+            raise ValueError("Task title cannot be empty.")
+        task = Task(self.next_id, clean_title)
         self.tasks.append(task)
         self.next_id += 1
         self._save()
