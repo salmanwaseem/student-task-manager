@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+# Runtime and local tooling
+tasks.json
+tasks.json.tmp
+.DS_Store
+.idea/
+.vscode/
