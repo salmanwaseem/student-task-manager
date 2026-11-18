@@ -11,4 +11,4 @@ A small Python console application for managing student tasks, built as a DevOps
 
 See the commit history and feature pull requests for development progress.
 
-Project status: Planning
+Project status: Ready for release
