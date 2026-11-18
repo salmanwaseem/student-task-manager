@@ -68,5 +68,8 @@ class TaskManager:
         return task
 
     def delete_task(self, task_id):
-        """Implemented in feature/delete-task."""
-        raise NotImplementedError("Task deletion is not available yet.")
+        """Delete a task by ID, preserving the IDs of other tasks."""
+        task = self._find_task(task_id)
+        self.tasks.remove(task)
+        self._save()
+        return task
