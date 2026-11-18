@@ -61,8 +61,11 @@ class TaskManager:
         raise KeyError(f"No task exists with ID {task_id}.")
 
     def complete_task(self, task_id):
-        """Implemented in feature/complete-task."""
-        raise NotImplementedError("Task completion is not available yet.")
+        """Mark the requested task complete, persisting the change."""
+        task = self._find_task(task_id)
+        task.completed = True
+        self._save()
+        return task
 
     def delete_task(self, task_id):
         """Implemented in feature/delete-task."""
